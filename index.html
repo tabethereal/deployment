@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MP3 播放器</title>
+    <style type="text/css">
+        .audio-player {
+            margin: 20px;
+        }
+        .audio-player audio {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>MP3 播放器</h1>
+
+    <div class="audio-player">
+        <ul id="playlist"></ul>
+    </div>
+
+    <script type="text/javascript">
+        // 检查目录下的 .mp3 文件
+        const directory = "/"; // 替换为实际的目录路径
+
+        // 获取目录下的所有文件
+        fetch(directory)
+            .then(response => response.text())
+            .then(data => {
+                const parser = new DOMParser();
+                const htmlDocument = parser.parseFromString(data, "text/html");
+                const files = Array.from(htmlDocument.querySelectorAll("a"))
+                    .map(a => a.href)
+                    .filter(href => href.endsWith(".mp3"));
+
+                // 创建播放器列表
+                const playlist = document.getElementById("playlist");
+                files.forEach(function(file) {
+                    const listItem = document.createElement("li");
+                    const audio = document.createElement("audio");
+                    audio.src = file;
+                    audio.controls = true;
+                    listItem.appendChild(audio);
+                    playlist.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error(error));
+    </script>
+</body>
+</html>
